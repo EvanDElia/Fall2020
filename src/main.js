@@ -22,15 +22,11 @@ const renderer = new WebGLRenderer({
     preserveDrawingBuffer: true
 });
 var controls;
-var gltfModel;
 
 const material = new MeshStandardMaterial({
-
     color: 0x00ff00
 });
 const fftCubes = new Array();
-
-
 
 
 function onWindowResize() {
@@ -59,15 +55,18 @@ async function init(tracks) {
     }
 
     {
-        scene.add(gltfModel);
-        //gltfModel.rotation.y = gltfModel.rotation.y + 5;
+        const gltfLoader = new GLTFLoader();
+        gltfLoader.load('http://evandelia.com/Fall2020/models/machine.2.gltf', (gltf) => {
+            const root = gltf.scene;
+            scene.add(root);
+        });
     }
 
     {
         const planeSize = 40;
 
         const loader = new THREE.TextureLoader();
-        const texture = loader.load('http://evandelia.com/fall2020/models/textures/checker.png'); //require('../models/textures/checker.png').default
+        const texture = loader.load('http://evandelia.com/Fall2020/models/textures/checker.png'); //require('../models/textures/checker.png').default
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.magFilter = THREE.NearestFilter;
@@ -146,23 +145,14 @@ async function init(tracks) {
     var analyser = new THREE.AudioAnalyser(sound, 256);
     window.analyser = analyser;
     var bufferSize = analyser.data.length;
-    for (var i = 0; i < bufferSize / 4; i++) {
-        var gradMaterial = new THREE.MeshPhongMaterial({
-            color: ("rgb("+(150-i*2)+","+i*10+","+i*5+")")
-        });
-        var bin = new THREE.Mesh(new THREE.BoxGeometry(bufferSize / (window.innerWidth * .5), bufferSize / window.innerWidth, 2), gradMaterial);
-        var binMirror = new THREE.Mesh(new THREE.BoxGeometry(bufferSize / (window.innerWidth * .5), bufferSize / window.innerWidth, 2), gradMaterial);
-        bin.position.z = .25;
-        bin.position.x = -2 + (bufferSize / window.innerWidth * i) * .5;
-        binMirror.position.z = .25;
-        binMirror.position.x = 2 - (bufferSize / window.innerWidth * i) * .5;
+    for (var i = 0; i < bufferSize / 2; i++) {
+        var bin = new THREE.Mesh(new THREE.BoxGeometry(bufferSize / window.innerWidth * 4, bufferSize / window.innerWidth, 2), material);
+        bin.position.z = -10;
+        bin.position.x = -10 + (bufferSize / window.innerWidth * i) * 4;
+        bin.position.y = -2;
         fftCubes.push(bin)
         scene.add(bin);
-        fftCubes.push(binMirror)
-        scene.add(binMirror);
-
     }
-   
 
     //////////
 
@@ -237,7 +227,7 @@ class MusicApp {
 
         self.audioLoader.load(self.trackList[self.currentSong].url, function (buffer) {
             self.sound.setBuffer(buffer);
-            // self.sound.play();
+            // self.sound.play(); //this will start playing the audio right away
         });
 
         this.sound.onEnded = () => {
@@ -254,17 +244,13 @@ class MusicApp {
 }
 
 $.ajax({
-    url: "//evandelia.com/fall2020/tracks/tracks.json",
+    url: "https://evandelia.com/blackbird/tracks.json",
     dataType: "json",
     success: function (response) {
-        const gltfLoader = new GLTFLoader();
-        gltfLoader.load('//evandelia.com/fall2020/models/machine.2.gltf', (gltf) => {
-            gltfModel = gltf.scene;
-            document.getElementById('startButton').innerHTML = '<span>Click to Play</span>';
-            document.getElementById('startButton').onclick = () => {
-                init(response.tracks);
-            }
-        });
+        document.getElementById('startButton').innerHTML = 'Click to Play';
+        document.getElementById('startButton').onclick = () => {
+            init(response.tracks);
+        }
     },
     error: function (response) {
         console.log(response);
@@ -277,9 +263,7 @@ async function render() {
     for (var i = 0; i < fftCubes.length; i++) {
         // console.log(window.analyser.data);
         window.analyser.getFrequencyData(window.analyser.data);
-        fftCubes[i].position.y = window.analyser.data[i] / 50 +2.5;
-        i++;
-        fftCubes[i].position.y = window.analyser.data[i] / 50 +2.5;
+        fftCubes[i].position.y = window.analyser.data[i] / 50;
     }
     renderer.render(scene, camera);
     controls.update();
