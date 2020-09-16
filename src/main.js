@@ -251,7 +251,7 @@ class MusicApp {
 }
 
 $.ajax({
-    url: "https://evandelia.com/blackbird/tracks.json",
+    url: "https://evandelia.com/fall2020/tracks/tracks.json",
     dataType: "json",
     success: function (response) {
         const gltfLoader = new GLTFLoader();
