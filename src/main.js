@@ -67,7 +67,7 @@ async function init(tracks) {
         const planeSize = 40;
 
         const loader = new THREE.TextureLoader();
-        const texture = loader.load('http://evandelia.com/Fall2020/models/textures/checker.png'); //require('../models/textures/checker.png').default
+        const texture = loader.load('http://evandelia.com/fall2020/models/textures/checker.png'); //require('../models/textures/checker.png').default
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.magFilter = THREE.NearestFilter;
@@ -255,7 +255,7 @@ $.ajax({
     dataType: "json",
     success: function (response) {
         const gltfLoader = new GLTFLoader();
-        gltfLoader.load('http://evandelia.com/Fall2020/models/machine.2.gltf', (gltf) => {
+        gltfLoader.load('http://evandelia.com/fall2020/models/machine.2.gltf', (gltf) => {
             gltfModel = gltf.scene;
             document.getElementById('startButton').innerHTML = '<span>Click to Play</span>';
             document.getElementById('startButton').onclick = () => {
