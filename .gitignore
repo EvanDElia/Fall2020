@@ -153,18 +153,18 @@ bower_components
 sftp-config.json
 
 # Audio and video files
-*.3gp
-*.f4m
-*.flv
-*.m4a
-*.m4v
-*.mov
-*.mp3
-*.mp4
-*.ogg
-*.ogv
-*.wav
-*.webm
+# *.3gp
+# *.f4m
+# *.flv
+# *.m4a
+# *.m4v
+# *.mov
+# *.mp3
+# *.mp4
+# *.ogg
+# *.ogv
+# *.wav
+# *.webm
 
 # Archive files
 *.7z
