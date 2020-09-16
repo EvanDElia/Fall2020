@@ -1,6 +1,5 @@
 .build
 build
-dist
 .ftppass
 *.psd
 node_modules
