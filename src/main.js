@@ -148,15 +148,18 @@ async function init(tracks) {
     var bufferSize = analyser.data.length;
     for (var i = 0; i < bufferSize / 4; i++) {
         var gradMaterial = new THREE.MeshPhongMaterial({
-
-            color: ("rgb("+i*10+","+i*10+","+i*5+")")
+            color: ("rgb("+(150-i*2)+","+i*10+","+i*5+")")
         });
-        var bin = new THREE.Mesh(new THREE.BoxGeometry(bufferSize / window.innerWidth * .5, bufferSize / window.innerWidth, 2), gradMaterial);
+        var bin = new THREE.Mesh(new THREE.BoxGeometry(bufferSize / (window.innerWidth * .5), bufferSize / window.innerWidth, 2), gradMaterial);
+        var binMirror = new THREE.Mesh(new THREE.BoxGeometry(bufferSize / (window.innerWidth * .5), bufferSize / window.innerWidth, 2), gradMaterial);
         bin.position.z = .25;
         bin.position.x = -2 + (bufferSize / window.innerWidth * i) * .5;
-        //bin.position.y = 50;
+        binMirror.position.z = .25;
+        binMirror.position.x = 2 - (bufferSize / window.innerWidth * i) * .5;
         fftCubes.push(bin)
         scene.add(bin);
+        fftCubes.push(binMirror)
+        scene.add(binMirror);
 
     }
    
@@ -251,11 +254,11 @@ class MusicApp {
 }
 
 $.ajax({
-    url: "https://evandelia.com/fall2020/tracks/tracks.json",
+    url: "//evandelia.com/fall2020/tracks/tracks.json",
     dataType: "json",
     success: function (response) {
         const gltfLoader = new GLTFLoader();
-        gltfLoader.load('http://evandelia.com/fall2020/models/machine.2.gltf', (gltf) => {
+        gltfLoader.load('//evandelia.com/fall2020/models/machine.2.gltf', (gltf) => {
             gltfModel = gltf.scene;
             document.getElementById('startButton').innerHTML = '<span>Click to Play</span>';
             document.getElementById('startButton').onclick = () => {
@@ -274,6 +277,8 @@ async function render() {
     for (var i = 0; i < fftCubes.length; i++) {
         // console.log(window.analyser.data);
         window.analyser.getFrequencyData(window.analyser.data);
+        fftCubes[i].position.y = window.analyser.data[i] / 50 +2.5;
+        i++;
         fftCubes[i].position.y = window.analyser.data[i] / 50 +2.5;
     }
     renderer.render(scene, camera);
